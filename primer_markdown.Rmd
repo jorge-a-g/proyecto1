@@ -1,0 +1,94 @@
+---
+title: "mi_primer_markdown"
+author: "Jorge González"
+date: "3/5/2023"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Primero leo los datos
+
+```{r}
+library(readr)
+bicis_muestra <- read_csv("datos/bicis_muestra.csv")
+```
+
+## dplyr
+### Vamos a usar el paquete dplyr para manipular los datos
+
+```{r}
+library(dplyr)
+```
+
+Filtrar datos con filter
+
+```{r}
+bicis_estacion_254 <- filter(bicis_muestra, id_estacion == 254)
+```
+
+```{r}
+filter(bicis_muestra, hora >= 15)
+```
+
+Estos filtros se pierden porque no están asignados en ninguna variable.
+
+```{r}
+bicis_tarde <- filter(bicis_muestra, hora >= 15)
+```
+
+Se pueden combinar filtros separando con coma o con operadores lógicos & = y, & = o
+
+```{r}
+filter(bicis_muestra, hora >= 15, id_estacion == 254)
+```
+
+Generar nuevas columnas con mutate(). En este caso se agrega la columna que calcula la proporción de bicis disponibles.
+
+```{r}
+proporcion_bicis <- mutate(bicis_estacion_254, proporcion = bicis_rotas/(bicis_rotas + bicis_disponibles))
+```
+
+Finalmente hay que resumir los datos con summarise()
+
+```{r}
+summarise(proporcion_bicis, media = mean(proporcion, na.rm = TRUE))
+```
+
+Vamos a agrupar con group_by()
+
+```{r}
+bicis_agrupadas <- group_by(proporcion_bicis, hora)
+```
+
+```{r}
+summarise(bicis_agrupadas, media = mean(proporcion, na.rm = TRUE))
+```
+
+Encadenar datos con "pipe"
+
+```{r}
+bicis_muestra |>
+  filter(id_estacion == 254) |>
+  mutate(proporcion = bicis_rotas/(bicis_rotas + bicis_disponibles)) |>
+  group_by(hora) |>
+  summarise(proporcion_media, mean(proporcion, na.rm = TRUE))
+```
+
+```{r}
+bicis_muestra |>
+    filter(id_estacion == 254) |>
+    select(tiempo, bicis_disponibles, bicis_rotas)
+```
+
+```{r}
+bicis_muestra |>
+    filter(id_estacion == 254) |>
+    group_by(tiempo) |>
+    summarise(disponibles_promedio = mean(bicis_disponibles))
+```
+
+
+
