@@ -1,0 +1,64 @@
+---
+title: "tidyr"
+output: html_document
+date: "2023-05-17"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(datos)
+library(dplyr)
+library(tidyr)
+```
+
+# Tidyr
+## Vamos a usar los datos en tabla4a
+
+```{r}
+tabla4a
+```
+
+Como la tabla está en formato ancho lo vamos a pasar a formato largo
+
+```{r}
+tabla4a |> 
+  pivot_longer(cols = c("1999", "2000"), 
+               names_to = "anio", 
+               values_to = "casos_tuberculosis")
+```
+
+## Ahora usamos los datos de la tabla nombres
+
+Completá el siguiente código para alargar la tabla usando las columnas “n” y “prop”. Al final tiene que quedar una tabla con una columna “variable” con valores “n” y “prop” y una columna “valor” que tiene números. 
+
+```{r}
+nombres |> 
+  pivot_longer(cols = c(n, prop),
+               names_to = "variable",
+               values_to = "valor")
+```
+
+Ahora vamos a ensanchas tablas largas.
+Para este caso vamos a usar la tabla que se llama tabla2
+
+```{r}
+tabla2 |> 
+  pivot_wider(names_from = tipo, # de dónde saca los nombres de columna
+              values_from = cuenta) # de donde saca los valores
+```
+
+Completá el código para “ensanchar” la tabla y que haya una columna para cada año con la cantidad de nacimientos con cada nombre y cada sexo.
+
+```{r}
+nombres |> 
+  pivot_wider(id_cols = c(sexo, nombre), 
+              names_from = anio,
+              values_from = n, 
+              values_fill = 0)
+
+```
+
+
+
+

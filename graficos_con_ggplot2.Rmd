@@ -1,0 +1,156 @@
+---
+title: "graficos_con_ggplot2"
+author: "Jorge González"
+output: html_document
+date: "2023-05-10"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(readr)
+library(ggplot2)
+library(dplyr)
+```
+
+## Primero vamos a leer los datos
+
+```{r}
+bicis <- read_csv("datos/bicis_muestra.csv")
+```
+
+## Vamos a graficar
+
+```{r}
+ggplot(data = bicis, mapping = aes(x = tiempo, y = bicis_disponibles)) +
+  geom_point()
+```
+
+Estos son muchos datos, así que me quedo solo con algunas estaciones
+
+```{r}
+bicis <- bicis |>
+  filter(id_estacion %in% 1:10)
+```
+
+y ahora grafico con menos datos
+
+```{r}
+ggplot(data = bicis, mapping = aes(x = tiempo, y = bicis_disponibles)) +
+  geom_point()
+```
+
+Cambio los puntos por líneas
+
+```{r}
+ggplot(bicis, aes(tiempo, bicis_disponibles)) +
+  geom_line()
+```
+
+pero lo quiero agrupar por estación
+
+```{r}
+ggplot(bicis, aes(tiempo, bicis_disponibles)) +
+  geom_line(aes(group = id_estacion))
+```
+
+hasta acá las líneas son imposible de diferenciar, entonces...
+
+```{r}
+ggplot(bicis, aes(tiempo, bicis_disponibles)) +
+  geom_line(aes(colour = as.factor(id_estacion)))
+```
+```{r}
+ggplot(bicis, aes(tiempo, bicis_disponibles)) +
+  geom_line(colour = "green") +
+  geom_point()
+```
+
+```{r}
+ggplot(bicis, aes(tiempo, bicis_disponibles)) +
+  geom_line(aes(colour = as.factor(id_estacion))) +
+  geom_point(aes(colour = as.factor(id_estacion)))
+```
+
+El orden de las capas altera el resultado
+
+```{r}
+ggplot(bicis, aes(tiempo, bicis_disponibles)) +
+  geom_line() +
+  geom_point(aes(colour = as.factor(id_estacion)))
+```
+
+```{r}
+ggplot(bicis, aes(tiempo, bicis_disponibles)) +
+  geom_line(aes(colour = as.factor(id_estacion))) +
+  geom_point()
+```
+
+# Algo más de dplyr
+
+Puedo seleccionar las columnas que necesito
+
+```{r}
+bicis |>
+  select(id_estacion, bicis_disponibles)
+```
+
+y puedo elegir todas menos la columna hora
+
+```{r}
+bicis |>
+  select(!hora)
+```
+
+si quiero eliminar varias
+
+```{r}
+bicis |>
+  select(-hora, -tiempo)
+
+bicis |> 
+  select(-c(hora, tiempo))
+```
+
+Cómo renombrar columnas?
+
+```{r}
+bicis |>
+  rename(id = id_estacion)
+```
+Contar filas usando n()
+
+```{r}
+bicis |>
+  summarise(n = n())
+```
+
+```{r}
+bicis |>
+  group_by(id_estacion) |>
+  summarise(n = n())
+```
+
+Ordenar filas con arrange()
+
+```{r}
+bicis |>
+  arrange(bicis_disponibles)
+```
+
+```{r}
+bicis |>
+  group_by(id_estacion) |>
+  summarise(n = n()) |>
+  arrange(n)
+```
+
+Para hacerlo decreciente
+
+```{r}
+bicis |>
+  group_by(id_estacion) |>
+  summarise(n = n()) |>
+  arrange(desc(n))
+```
+

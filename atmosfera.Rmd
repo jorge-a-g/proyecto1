@@ -1,0 +1,41 @@
+---
+title: "Atmosfera"
+author: "Jorge"
+date: "2023-05-17"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(datos)
+library(ggplot2)
+```
+
+# Ejercicio atmósfera
+
+```{r}
+atmosfera
+```
+
+Graficar la relación entre presión y temperatura:
+
+```{r}
+atmosfera |>
+  ggplot(aes(presion, temperatura)) +
+  geom_point()
+```
+
+
+```{r}
+atmosfera |>
+  ggplot(aes(presion, temperatura)) +
+  geom_point(aes(color = as.factor(mes)))
+```
+
+```{r}
+atmos <- mutate(atmosfera, hemisferio = sign(latitud))
+
+ggplot(aes())
+```
+
