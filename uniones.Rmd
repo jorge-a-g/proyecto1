@@ -1,0 +1,114 @@
+---
+title: "uniones"
+author: "Jorge González"
+output: html_document
+date: "2023-05-24"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(datos)
+library(ggplot2)
+library(readr)
+```
+
+```{r}
+artistas <- tibble(nombre = c("Cerati", "Bosio", "Gattas"),
+                   banda = c("Soda Stereo", "Soda Stereo", "Miranda!"))
+
+instrumentos <- tibble(nombre = c("Cerati", "Bosio", "Lolo"),
+                       instrumentos = c("Guitarra", "Bajo", "Guitarra"))
+
+```
+
+```{r}
+artistas
+```
+
+```{r}
+instrumentos
+```
+Vamos a unir estas dos tablas
+
+Las funciones de dplyr que unen tablas siempre terminan en _join()
+
+```{r}
+left_join(artistas, instrumentos)
+```
+
+```{r}
+right_join(artistas, instrumentos)
+```
+
+```{r}
+inner_join(artistas, instrumentos)
+```
+
+Qué pasa si las columans tienen nombres distintos.
+
+
+```{r}
+artistas2 <- tibble(artista = c("Cerati", "Bosio", "Gattas"),
+                    banda = c("Soda Stereo", "Soda Stereo", "Miranda!"))
+```
+
+```{r}
+left_join(artistas2, instrumentos, by = c("artista" = "nombre"))
+```
+
+
+```{r}
+vuelos_v_media <- vuelos |>
+  mutate(velocidad = distancia/tiempo_vuelo) |>
+  group_by(codigo_cola) |>
+  summarise(velocidad_media = mean(velocidad, na.rm = TRUE)) |> 
+  left_join(aviones, by = "codigo_cola")
+
+```
+
+## Mapa CABA
+
+```{r}
+download.file("https://raw.githubusercontent.com/DiploDatosUNAB/intro_progr-uniones_for/main/datos/barrios-CABA.geojson", "datos/barrios-CABA.geojson")
+
+barrios <- sf::st_read("datos/barrios-CABA.geojson", stringsAsFactors = FALSE)
+mapa_caba <- ggplot2::geom_sf(data = barrios, fill = NA, inherit.aes = FALSE)
+
+ggplot() +
+  mapa_caba
+```
+
+1. Hacé un mapa que muestre la ubicación de las estaciones (definida por x = lon, y = lat) usando puntos. (datos en la próxima diapo) 
+
+```{r}
+estaciones <- read_csv("datos/estaciones.csv")
+```
+
+2. Calculá la cantidad media de bicis_disponibles para cada estación.
+
+```{r}
+bicis <- read_csv("datos/bicis_muestra.csv")
+
+bicis |> 
+  group_by(id_estacion) |> 
+  summarise(media_disponibles = mean(bicis_disponibles, na.rm = T))
+```
+
+3. Uní este resultado con las estaciones para hacer el mismo mapa pero donde el color y el tamaño de cada punto represente la cantidad media de bicis_disponibles de cada estación.
+
+```{r}
+bicis |> 
+  group_by(id_estacion) |> 
+  summarise(media_disponibles = mean(bicis_disponibles, na.rm = T)) |> 
+  left_join(estaciones) |> 
+  ggplot(aes(lon, lat)) + 
+  geom_point(aes(color = media_disponibles, size = media_disponibles))
+```
+
+
+
+
+
+

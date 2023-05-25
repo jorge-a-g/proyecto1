@@ -1,0 +1,38 @@
+---
+title: "iteraciones"
+author: "Jorge González"
+date: "2023-05-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Iteraciones con for
+
+```{r}
+for (i in 1:10) {
+  print(i)
+}
+```
+
+```{r}
+for (i in 10:1) {
+  print(paste0("i vale ", i))
+}
+```
+
+## Ejercicio en grupo
+
+```{r}
+nombres <- c("Fernanda", "Leonel", "Jorge") 
+
+for (nombre in nombres) {
+  print(paste0("Hola, ", nombre))
+}
+
+```
+
+
+
