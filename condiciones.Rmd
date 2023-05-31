@@ -1,0 +1,121 @@
+---
+title: "condiciones"
+author: "Jorge González"
+date: "2023-05-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(datos)
+library(ggplot2)
+```
+
+```{r}
+vuelos_promedio <- vuelos |>
+  group_by(mes, dia) |>
+  summarise(atraso_medio = mean(atraso_salida, na.rm = TRUE))
+```
+
+Usando la tabla anterior, el siguiente código genera un plot de atraso medio en la salida para cada día del mes de enero:
+
+```{r}
+vuelos_promedio |>
+  filter(mes == 1) |>
+  ggplot(aes(dia, atraso_medio)) +
+  geom_line() +
+  labs(title = paste0("Atraso medio en la salida para el mes ", 1))
+
+ggsave(paste0("atraso_medio_", 1, ".png"))
+```
+
+Armá un loop para hacer 12 gráficos, uno por cada mes.
+
+```{r}
+for (m in 1:12) {
+  vuelos_promedio |>
+    filter(mes == m) |>
+    ggplot(aes(dia, atraso_medio)) +
+    geom_line() +
+    labs(title = paste0("Atraso medio en la salida para el mes ", m))
+
+  ggsave(paste0("atraso_medio_", m, ".png"))
+}
+```
+
+Completá el código para que imprima “... es docente de la carrera” si nombre es el nombre de une docente.
+
+```{r}
+profes <- c("Lautaro", "Paola", "Juan", "Yanina", "Elio") 
+nombre <- "Paola" 
+if (nombre %in% profes) {
+  print(paste0(nombre, " es docente de la carrera"))
+}
+```
+
+
+```{r}
+profes <- c("Lautaro", "Paola", "Juan", "Yanina", "Elio") 
+nombre <- c("Paola", "Diego", "Juan")
+
+son_profes <- nombre %in% profes
+
+paste0(nombre[son_profes], " es docente de la carrera.")
+```
+
+El siguiente código simula un juego de ruleta. Modificalo para que al final imprima la ganancia neta de la apuesta. El acierto da cantidad_apostada*36. Si no se acierta, no se gana nada.
+
+```{r}
+ganancia <- 0
+```
+
+```{r}
+ruleta_posiblidades <- 0:36
+ruleta_tiro <- sample(ruleta_posiblidades, 1)
+
+apuesta <- 35
+cantidad_apostada <- 10
+
+print(ruleta_tiro)
+
+if (ruleta_tiro == apuesta) {
+  ganancia <- ganancia + (cantidad_apostada * 36)
+} else {
+  ganancia <- ganancia - cantidad_apostada 
+}
+paste0("Ganancia neta: ", ganancia)
+```
+
+# Funciones
+
+```{r}
+viento_en_n <- c(1, 2, 6, 12)
+
+viento_en_ms <- viento_en_n * 0.5144
+```
+
+```{r}
+nudos_a_mxs <- function(viento_en_nudos) {
+  viento_en_nudos * 0.5144
+}
+```
+
+```{r}
+viento_en_ms <- nudos_a_mxs(viento_en_n)
+```
+
+Completá para hacer una función que convierta valores de pulgadas a centímetros. (1 pulgada son 2.54 centímetros)
+
+```{r}
+pulgadas_a_cm <- function(pulgadas = 1) {
+  pulgadas * 2.54
+}
+
+pulgadas_a_cm(5)
+```
+
+
+
+
